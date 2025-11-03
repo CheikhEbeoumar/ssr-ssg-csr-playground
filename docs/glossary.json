@@ -1,0 +1,286 @@
+[
+  {
+    "id": "ssr",
+    "term": "SSR (Server-Side Rendering)",
+    "short_definition": "Rendering HTML on the server for each request",
+    "long_definition": "Server-Side Rendering is a technique where HTML pages are generated on the server at request time. The server processes the request, fetches necessary data, renders the complete HTML, and sends it to the client. This provides fast initial page load and better SEO.",
+    "sources": [
+      "https://web.dev/rendering-on-the-web/",
+      "https://nextjs.org/docs/basic-features/pages#server-side-rendering"
+    ],
+    "tags": ["rendering", "server", "performance", "seo"]
+  },
+  {
+    "id": "ssg",
+    "term": "SSG (Static Site Generation)",
+    "short_definition": "Pre-rendering pages at build time",
+    "long_definition": "Static Site Generation is a technique where HTML pages are generated at build time, before deployment. The pre-rendered static files are served directly from a CDN, resulting in extremely fast load times and reduced server costs.",
+    "sources": [
+      "https://jamstack.org/glossary/ssg/",
+      "https://nextjs.org/docs/basic-features/pages#static-generation"
+    ],
+    "tags": ["rendering", "build-time", "performance", "jamstack"]
+  },
+  {
+    "id": "csr",
+    "term": "CSR (Client-Side Rendering)",
+    "short_definition": "Rendering content in the browser using JavaScript",
+    "long_definition": "Client-Side Rendering is a technique where the browser receives a minimal HTML shell and JavaScript bundles. The JavaScript executes in the browser to fetch data and render the UI dynamically. This provides rich interactivity but may have slower initial loads.",
+    "sources": [
+      "https://web.dev/rendering-on-the-web/",
+      "https://create-react-app.dev/"
+    ],
+    "tags": ["rendering", "browser", "javascript", "spa"]
+  },
+  {
+    "id": "hydration",
+    "term": "Hydration",
+    "short_definition": "Attaching JavaScript behavior to server-rendered HTML",
+    "long_definition": "Hydration is the process of attaching event listeners and making a server-rendered HTML page interactive by running JavaScript on the client. The server sends fully rendered HTML, and then JavaScript 'hydrates' it to add interactivity.",
+    "sources": [
+      "https://web.dev/rendering-on-the-web/#rehydration",
+      "https://react.dev/reference/react-dom/client/hydrateRoot"
+    ],
+    "tags": ["rendering", "interactivity", "javascript"]
+  },
+  {
+    "id": "isr",
+    "term": "ISR (Incremental Static Regeneration)",
+    "short_definition": "Updating static pages after build without full rebuild",
+    "long_definition": "Incremental Static Regeneration allows you to update static content after the site is built. Pages can be regenerated in the background when requested, combining the benefits of static generation with the flexibility of server-side rendering.",
+    "sources": [
+      "https://nextjs.org/docs/basic-features/data-fetching/incremental-static-regeneration",
+      "https://vercel.com/docs/concepts/next.js/incremental-static-regeneration"
+    ],
+    "tags": ["rendering", "nextjs", "performance", "hybrid"]
+  },
+  {
+    "id": "ttfb",
+    "term": "TTFB (Time To First Byte)",
+    "short_definition": "Time from request to first byte of response",
+    "long_definition": "Time To First Byte measures the time between the browser requesting a page and receiving the first byte of information from the server. It's a key metric for server performance and network latency.",
+    "sources": [
+      "https://web.dev/ttfb/",
+      "https://developer.mozilla.org/en-US/docs/Glossary/time_to_first_byte"
+    ],
+    "tags": ["performance", "metrics", "server"]
+  },
+  {
+    "id": "fcp",
+    "term": "FCP (First Contentful Paint)",
+    "short_definition": "Time when first content element is rendered",
+    "long_definition": "First Contentful Paint marks the time when the browser renders the first piece of DOM content (text, image, canvas, etc.). It's an important user-centric metric for perceived loading performance.",
+    "sources": [
+      "https://web.dev/fcp/",
+      "https://developer.mozilla.org/en-US/docs/Glossary/First_contentful_paint"
+    ],
+    "tags": ["performance", "metrics", "rendering", "user-experience"]
+  },
+  {
+    "id": "lcp",
+    "term": "LCP (Largest Contentful Paint)",
+    "short_definition": "Time when largest content element is rendered",
+    "long_definition": "Largest Contentful Paint measures the time when the largest visible content element is rendered. It's a Core Web Vital metric that represents perceived loading speed from the user's perspective.",
+    "sources": [
+      "https://web.dev/lcp/",
+      "https://web.dev/vitals/"
+    ],
+    "tags": ["performance", "metrics", "core-web-vitals", "user-experience"]
+  },
+  {
+    "id": "cls",
+    "term": "CLS (Cumulative Layout Shift)",
+    "short_definition": "Measure of visual stability during page load",
+    "long_definition": "Cumulative Layout Shift measures unexpected layout shifts during the page load. It quantifies visual stability by tracking movement of visible elements. Lower CLS scores indicate better user experience.",
+    "sources": [
+      "https://web.dev/cls/",
+      "https://web.dev/vitals/"
+    ],
+    "tags": ["performance", "metrics", "core-web-vitals", "user-experience"]
+  },
+  {
+    "id": "csp",
+    "term": "CSP (Content Security Policy)",
+    "short_definition": "Security standard to prevent XSS and injection attacks",
+    "long_definition": "Content Security Policy is a security standard that helps prevent cross-site scripting (XSS), clickjacking, and other code injection attacks by controlling which resources can be loaded and executed on a web page.",
+    "sources": [
+      "https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP",
+      "https://content-security-policy.com/"
+    ],
+    "tags": ["security", "web", "xss"]
+  },
+  {
+    "id": "streaming",
+    "term": "Streaming",
+    "short_definition": "Sending HTML to the client progressively",
+    "long_definition": "Streaming is a server rendering technique where HTML is sent to the browser in chunks as it becomes available, rather than waiting for the entire page to be rendered. This improves perceived performance and TTFB.",
+    "sources": [
+      "https://web.dev/streaming-ssr/",
+      "https://nextjs.org/docs/advanced-features/react-18/streaming"
+    ],
+    "tags": ["rendering", "server", "performance", "react-18"]
+  },
+  {
+    "id": "prerendering",
+    "term": "Pre-rendering",
+    "short_definition": "Generating HTML in advance of user requests",
+    "long_definition": "Pre-rendering is a general term for any technique that generates HTML before it's requested by a user. This includes static site generation, build-time rendering, and other ahead-of-time HTML generation methods.",
+    "sources": [
+      "https://web.dev/rendering-on-the-web/",
+      "https://developers.google.com/search/docs/advanced/javascript/dynamic-rendering"
+    ],
+    "tags": ["rendering", "build-time", "seo"]
+  },
+  {
+    "id": "revalidation",
+    "term": "Revalidation",
+    "short_definition": "Updating cached or static content",
+    "long_definition": "Revalidation is the process of updating cached or statically generated content. It can be time-based (regenerating after a certain interval) or on-demand (triggered by events like content updates).",
+    "sources": [
+      "https://nextjs.org/docs/basic-features/data-fetching/incremental-static-regeneration",
+      "https://swr.vercel.app/"
+    ],
+    "tags": ["caching", "performance", "data-fetching"]
+  },
+  {
+    "id": "client-side-routing",
+    "term": "Client-Side Routing",
+    "short_definition": "Navigation without full page reloads",
+    "long_definition": "Client-Side Routing allows navigation between pages without full page reloads. JavaScript intercepts link clicks and updates the URL and content dynamically, providing a faster, app-like experience.",
+    "sources": [
+      "https://developer.mozilla.org/en-US/docs/Web/API/History_API",
+      "https://reactrouter.com/en/main"
+    ],
+    "tags": ["navigation", "spa", "performance", "javascript"]
+  },
+  {
+    "id": "static-props",
+    "term": "Static Props",
+    "short_definition": "Data fetching at build time for static generation",
+    "long_definition": "Static Props (getStaticProps in Next.js) is a function that runs at build time to fetch data for static generation. The data is embedded in the pre-rendered HTML, eliminating the need for runtime data fetching.",
+    "sources": [
+      "https://nextjs.org/docs/basic-features/data-fetching/get-static-props"
+    ],
+    "tags": ["nextjs", "data-fetching", "ssg", "build-time"]
+  },
+  {
+    "id": "server-props",
+    "term": "Server Props",
+    "short_definition": "Data fetching at request time for SSR",
+    "long_definition": "Server Props (getServerSideProps in Next.js) is a function that runs on the server for each request to fetch data for server-side rendering. This ensures the page always has the latest data but increases server load.",
+    "sources": [
+      "https://nextjs.org/docs/basic-features/data-fetching/get-server-side-props"
+    ],
+    "tags": ["nextjs", "data-fetching", "ssr", "server"]
+  },
+  {
+    "id": "spa",
+    "term": "SPA (Single Page Application)",
+    "short_definition": "Web app that loads a single HTML page and updates dynamically",
+    "long_definition": "A Single Page Application is a web application that loads a single HTML page and dynamically updates content as the user interacts with the app. SPAs use client-side routing and typically rely heavily on CSR.",
+    "sources": [
+      "https://developer.mozilla.org/en-US/docs/Glossary/SPA",
+      "https://en.wikipedia.org/wiki/Single-page_application"
+    ],
+    "tags": ["architecture", "csr", "javascript"]
+  },
+  {
+    "id": "jamstack",
+    "term": "Jamstack",
+    "short_definition": "Architecture based on JavaScript, APIs, and Markup",
+    "long_definition": "Jamstack is a modern web architecture based on client-side JavaScript, reusable APIs, and prebuilt Markup. It emphasizes decoupling the frontend from the backend, using CDNs for static assets, and leveraging build-time rendering.",
+    "sources": [
+      "https://jamstack.org/",
+      "https://www.netlify.com/jamstack/"
+    ],
+    "tags": ["architecture", "ssg", "cdn", "performance"]
+  },
+  {
+    "id": "code-splitting",
+    "term": "Code Splitting",
+    "short_definition": "Breaking JavaScript bundles into smaller chunks",
+    "long_definition": "Code Splitting is a technique where JavaScript bundles are broken into smaller chunks that can be loaded on demand. This reduces initial bundle size and improves loading performance by only loading code when it's needed.",
+    "sources": [
+      "https://webpack.js.org/guides/code-splitting/",
+      "https://react.dev/learn/code-splitting"
+    ],
+    "tags": ["performance", "javascript", "optimization", "bundling"]
+  },
+  {
+    "id": "lazy-loading",
+    "term": "Lazy Loading",
+    "short_definition": "Deferring loading of resources until needed",
+    "long_definition": "Lazy Loading is a technique where resources (images, components, routes) are loaded only when they're needed rather than upfront. This improves initial load time by reducing the amount of content that needs to be downloaded initially.",
+    "sources": [
+      "https://web.dev/lazy-loading/",
+      "https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading"
+    ],
+    "tags": ["performance", "optimization", "images", "javascript"]
+  },
+  {
+    "id": "edge-computing",
+    "term": "Edge Computing",
+    "short_definition": "Running code close to users geographically",
+    "long_definition": "Edge Computing involves running code on servers that are geographically distributed and close to end users. This reduces latency by minimizing the distance data needs to travel, improving performance for server-rendered applications.",
+    "sources": [
+      "https://vercel.com/docs/concepts/functions/edge-functions",
+      "https://www.cloudflare.com/learning/serverless/glossary/what-is-edge-computing/"
+    ],
+    "tags": ["infrastructure", "performance", "serverless", "cdn"]
+  },
+  {
+    "id": "progressive-enhancement",
+    "term": "Progressive Enhancement",
+    "short_definition": "Building for basic functionality first, then enhancing",
+    "long_definition": "Progressive Enhancement is a design philosophy that starts with a baseline of essential content and functionality that works for everyone, then progressively adds enhancements for browsers and devices that support them.",
+    "sources": [
+      "https://developer.mozilla.org/en-US/docs/Glossary/Progressive_Enhancement",
+      "https://web.dev/progressive-enhancement/"
+    ],
+    "tags": ["architecture", "accessibility", "web-design"]
+  },
+  {
+    "id": "critical-css",
+    "term": "Critical CSS",
+    "short_definition": "Inlining essential CSS for above-the-fold content",
+    "long_definition": "Critical CSS is the technique of extracting and inlining the CSS needed to render above-the-fold content. This eliminates render-blocking CSS for the initial viewport, improving FCP and perceived performance.",
+    "sources": [
+      "https://web.dev/extract-critical-css/",
+      "https://github.com/addyosmani/critical"
+    ],
+    "tags": ["performance", "css", "optimization", "rendering"]
+  },
+  {
+    "id": "prefetching",
+    "term": "Prefetching",
+    "short_definition": "Loading resources before they're needed",
+    "long_definition": "Prefetching is a technique where resources (pages, data, assets) are loaded in advance based on predicted user behavior. This makes subsequent navigation and interactions feel instantaneous by having content ready before it's requested.",
+    "sources": [
+      "https://web.dev/link-prefetch/",
+      "https://nextjs.org/docs/api-reference/next/link#prefetch"
+    ],
+    "tags": ["performance", "optimization", "navigation"]
+  },
+  {
+    "id": "server-components",
+    "term": "Server Components",
+    "short_definition": "React components that render only on the server",
+    "long_definition": "Server Components are a React feature where components render exclusively on the server and send only the rendered output to the client. This reduces JavaScript bundle size and allows direct access to backend resources without APIs.",
+    "sources": [
+      "https://react.dev/blog/2023/03/22/react-labs-what-we-have-been-working-on-march-2023#react-server-components",
+      "https://nextjs.org/docs/getting-started/react-essentials#server-components"
+    ],
+    "tags": ["react", "rendering", "server", "react-18"]
+  },
+  {
+    "id": "lighthouse",
+    "term": "Lighthouse",
+    "short_definition": "Automated tool for web page quality auditing",
+    "long_definition": "Lighthouse is an open-source, automated tool for improving web page quality. It audits performance, accessibility, SEO, and best practices, providing scores and actionable recommendations for improvement.",
+    "sources": [
+      "https://developer.chrome.com/docs/lighthouse/overview/",
+      "https://github.com/GoogleChrome/lighthouse"
+    ],
+    "tags": ["performance", "tools", "metrics", "auditing"]
+  }
+]

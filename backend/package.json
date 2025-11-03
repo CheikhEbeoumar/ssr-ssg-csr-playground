@@ -1,0 +1,19 @@
+{
+  "name": "glossary-api",
+  "version": "1.0.0",
+  "description": "Glossary API service for SSR/SSG/CSR terminology",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "node --test"
+  },
+  "keywords": ["glossary", "api", "ssr", "ssg", "csr"],
+  "author": "Cheikh Ebeoumar",
+  "license": "MIT",
+  "dependencies": {
+    "fastify": "^4.28.1",
+    "@fastify/cors": "^9.0.1"
+  }
+}
