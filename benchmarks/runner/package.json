@@ -1,0 +1,18 @@
+{
+  "name": "benchmark-runner",
+  "version": "1.0.0",
+  "description": "Performance benchmark runner for SSR/SSG/CSR examples",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "benchmark": "node index.js"
+  },
+  "keywords": ["benchmark", "lighthouse", "performance"],
+  "author": "Cheikh Ebeoumar",
+  "license": "MIT",
+  "dependencies": {
+    "lighthouse": "^12.2.1",
+    "puppeteer": "^23.11.1"
+  }
+}
