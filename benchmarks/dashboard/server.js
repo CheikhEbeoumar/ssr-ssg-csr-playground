@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import fastifyStatic from '@fastify/static';
 import cors from '@fastify/cors';
+import rateLimit from '@fastify/rate-limit';
 import { readFile, readdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -15,6 +16,12 @@ const fastify = Fastify({
 // Enable CORS
 await fastify.register(cors);
 
+// Enable rate limiting
+await fastify.register(rateLimit, {
+  max: 100, // Maximum 100 requests
+  timeWindow: '1 minute' // Per minute
+});
+
 // Serve static files
 await fastify.register(fastifyStatic, {
   root: join(__dirname, 'public'),
@@ -22,7 +29,14 @@ await fastify.register(fastifyStatic, {
 });
 
 // API: Get latest benchmark results
-fastify.get('/api/results/latest', async (request, reply) => {
+fastify.get('/api/results/latest', {
+  config: {
+    rateLimit: {
+      max: 30,
+      timeWindow: '1 minute'
+    }
+  }
+}, async (request, reply) => {
   try {
     const filePath = join(__dirname, '../results/latest.json');
     const data = await readFile(filePath, 'utf-8');
@@ -34,7 +48,14 @@ fastify.get('/api/results/latest', async (request, reply) => {
 });
 
 // API: Get all benchmark results
-fastify.get('/api/results', async (request, reply) => {
+fastify.get('/api/results', {
+  config: {
+    rateLimit: {
+      max: 10,
+      timeWindow: '1 minute'
+    }
+  }
+}, async (request, reply) => {
   try {
     const resultsDir = join(__dirname, '../results');
     const files = await readdir(resultsDir);
