@@ -17,16 +17,15 @@ services:
       retries: 3
       start_period: 40s
 
-  # Frontend service (to be added in Phase B)
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "5173:5173"
-  #   depends_on:
-  #     - glossary-api
-  #   restart: unless-stopped
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - glossary-api
+    restart: unless-stopped
 
 networks:
   default:
