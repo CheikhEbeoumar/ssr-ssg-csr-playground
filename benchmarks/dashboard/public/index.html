@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Metrics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .refresh-btn {
+            padding: 0.5rem 1rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: #5568d3;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .metric-unit {
+            font-size: 1rem;
+            color: #718096;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .comparison-table th {
+            background: #f7fafc;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .comparison-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .comparison-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-ssr {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .badge-ssg {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .badge-csr {
+            background: #e9d8fd;
+            color: #553c9a;
+        }
+
+        .score {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .score-good {
+            color: #48bb78;
+        }
+
+        .score-average {
+            color: #ed8936;
+        }
+
+        .score-poor {
+            color: #f56565;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #718096;
+        }
+
+        .error {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-top: 1rem;
+        }
+
+        .timestamp {
+            color: #718096;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Performance Metrics Dashboard</h1>
+            <p class="subtitle">SSR vs SSG vs CSR Benchmark Results</p>
+        </header>
+
+        <div class="dashboard">
+            <!-- Summary Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Latest Results</h2>
+                    <button class="refresh-btn" onclick="loadResults()">🔄 Refresh</button>
+                </div>
+                <div id="summary-content">
+                    <div class="loading">Loading results...</div>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="card">
+                <h2 class="card-title">Detailed Comparison</h2>
+                <div id="comparison-content">
+                    <div class="loading">Loading comparison...</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="card">
+                <h2 class="card-title">Performance Metrics</h2>
+                <div class="chart-container">
+                    <canvas id="metricsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Core Web Vitals</h2>
+                <div class="chart-container">
+                    <canvas id="webVitalsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let metricsChart = null;
+        let webVitalsChart = null;
+
+        function getScoreClass(score) {
+            if (score >= 90) return 'score-good';
+            if (score >= 50) return 'score-average';
+            return 'score-poor';
+        }
+
+        function getBadgeClass(method) {
+            return `badge-${method.toLowerCase()}`;
+        }
+
+        async function loadResults() {
+            try {
+                const response = await fetch('/api/results/latest');
+                
+                if (!response.ok) {
+                    throw new Error('No results available. Run benchmarks first.');
+                }
+
+                const results = await response.json();
+                displayResults(results);
+            } catch (error) {
+                document.getElementById('summary-content').innerHTML = `
+                    <div class="error">
+                        ❌ ${error.message}
+                    </div>
+                `;
+                document.getElementById('comparison-content').innerHTML = '';
+            }
+        }
+
+        function displayResults(results) {
+            // Summary section
+            const successful = results.filter(r => !r.error);
+            
+            if (successful.length === 0) {
+                document.getElementById('summary-content').innerHTML = `
+                    <div class="error">No successful benchmarks found.</div>
+                `;
+                return;
+            }
+
+            const avgPerformance = successful.reduce((sum, r) => sum + r.metrics.performance, 0) / successful.length;
+            const minTTFB = Math.min(...successful.map(r => r.metrics.ttfb));
+            const minFCP = Math.min(...successful.map(r => r.metrics.fcp));
+            const minLCP = Math.min(...successful.map(r => r.metrics.lcp));
+
+            const timestamp = new Date(successful[0].timestamp).toLocaleString();
+
+            document.getElementById('summary-content').innerHTML = `
+                <div class="timestamp">Last updated: ${timestamp}</div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Avg Performance Score</div>
+                        <div class="metric-value">${avgPerformance.toFixed(1)}<span class="metric-unit">/100</span></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Best TTFB</div>
+                        <div class="metric-value">${minTTFB.toFixed(0)}<span class="metric-unit">ms</span></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Best FCP</div>
+                        <div class="metric-value">${minFCP.toFixed(0)}<span class="metric-unit">ms</span></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Best LCP</div>
+                        <div class="metric-value">${minLCP.toFixed(0)}<span class="metric-unit">ms</span></div>
+                    </div>
+                </div>
+            `;
+
+            // Comparison table
+            let tableHTML = `
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Performance</th>
+                            <th>TTFB</th>
+                            <th>FCP</th>
+                            <th>LCP</th>
+                            <th>CLS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            successful.forEach(result => {
+                const m = result.metrics;
+                tableHTML += `
+                    <tr>
+                        <td><span class="badge ${getBadgeClass(result.renderMethod)}">${result.renderMethod.toUpperCase()}</span></td>
+                        <td><span class="score ${getScoreClass(m.performance)}">${m.performance.toFixed(1)}</span></td>
+                        <td>${m.ttfb.toFixed(0)}ms</td>
+                        <td>${m.fcp.toFixed(0)}ms</td>
+                        <td>${m.lcp.toFixed(0)}ms</td>
+                        <td>${m.cls.toFixed(3)}</td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('comparison-content').innerHTML = tableHTML;
+
+            // Update charts
+            updateCharts(successful);
+        }
+
+        function updateCharts(results) {
+            const labels = results.map(r => r.renderMethod.toUpperCase());
+            const colors = {
+                ssr: 'rgba(66, 153, 225, 0.8)',
+                ssg: 'rgba(72, 187, 120, 0.8)',
+                csr: 'rgba(159, 122, 234, 0.8)'
+            };
+
+            // Performance metrics chart
+            const ctx1 = document.getElementById('metricsChart');
+            if (metricsChart) metricsChart.destroy();
+            
+            metricsChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Performance Score',
+                            data: results.map(r => r.metrics.performance),
+                            backgroundColor: results.map(r => colors[r.renderMethod]),
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            // Web Vitals chart
+            const ctx2 = document.getElementById('webVitalsChart');
+            if (webVitalsChart) webVitalsChart.destroy();
+            
+            webVitalsChart = new Chart(ctx2, {
+                type: 'radar',
+                data: {
+                    labels: ['TTFB', 'FCP', 'LCP', 'TBT', 'SI'],
+                    datasets: results.map(r => ({
+                        label: r.renderMethod.toUpperCase(),
+                        data: [
+                            r.metrics.ttfb / 10,
+                            r.metrics.fcp / 100,
+                            r.metrics.lcp / 100,
+                            r.metrics.tbt / 10,
+                            r.metrics.si / 100
+                        ],
+                        backgroundColor: colors[r.renderMethod].replace('0.8', '0.2'),
+                        borderColor: colors[r.renderMethod],
+                        borderWidth: 2
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load results on page load
+        loadResults();
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadResults, 30000);
+    </script>
+</body>
+</html>
