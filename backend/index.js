@@ -11,9 +11,13 @@ const fastify = Fastify({
   logger: true
 });
 
-// Enable CORS
+// Enable CORS - restrict origins in production
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',')
+  : true; // Allow all in development
+
 await fastify.register(cors, {
-  origin: true
+  origin: allowedOrigins
 });
 
 // Load glossary data
@@ -48,6 +52,13 @@ fastify.get('/api/terms', async (request, reply) => {
 // Get term by ID
 fastify.get('/api/terms/:id', async (request, reply) => {
   const { id } = request.params;
+  
+  // Validate ID format (alphanumeric, hyphens, underscores only)
+  if (!/^[a-zA-Z0-9_-]+$/.test(id)) {
+    reply.code(400);
+    return { error: 'Invalid term ID format', id };
+  }
+  
   const term = glossaryData.find(t => t.id === id);
   
   if (!term) {
@@ -65,6 +76,12 @@ fastify.get('/api/search', async (request, reply) => {
   if (!q) {
     reply.code(400);
     return { error: 'Query parameter "q" is required' };
+  }
+  
+  // Validate query length
+  if (q.length > 100) {
+    reply.code(400);
+    return { error: 'Query too long (max 100 characters)' };
   }
   
   const query = q.toLowerCase();
