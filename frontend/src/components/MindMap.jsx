@@ -14,6 +14,7 @@ const MindMap = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [viewMode, setViewMode] = useState('glossary'); // 'glossary' or 'graph'
 
   // Fetch glossary terms from API
   useEffect(() => {
@@ -38,9 +39,9 @@ const MindMap = () => {
     fetchTerms();
   }, []);
 
-  // Initialize cytoscape graph
+  // Initialize cytoscape graph only in graph mode
   useEffect(() => {
-    if (!containerRef.current || terms.length === 0) return;
+    if (viewMode !== 'graph' || !containerRef.current || terms.length === 0) return;
 
     // Create nodes from terms
     const nodes = terms.map(term => ({
@@ -85,64 +86,76 @@ const MindMap = () => {
         {
           selector: 'node',
           style: {
-            'background-color': '#4A90E2',
+            'background-color': '#ffffff',
             'label': 'data(label)',
-            'color': '#fff',
-            'text-outline-color': '#4A90E2',
-            'text-outline-width': 2,
-            'font-size': '12px',
+            'color': '#667eea',
+            'text-outline-color': '#ffffff',
+            'text-outline-width': 3,
+            'font-size': '16px',
+            'font-weight': 'bold',
             'width': 'label',
             'height': 'label',
-            'padding': '12px',
+            'padding': '24px',
             'shape': 'roundrectangle',
             'text-valign': 'center',
             'text-halign': 'center',
             'text-wrap': 'wrap',
-            'text-max-width': '120px',
+            'text-max-width': '180px',
+            'border-width': 3,
+            'border-color': '#667eea',
+            'box-shadow': '0 6px 20px rgba(0, 0, 0, 0.2)',
           },
         },
         {
           selector: 'node:selected',
           style: {
-            'background-color': '#E94B3C',
-            'text-outline-color': '#E94B3C',
-            'border-width': 3,
+            'background-color': '#667eea',
+            'color': '#ffffff',
+            'text-outline-color': '#667eea',
+            'border-width': 4,
             'border-color': '#fff',
+            'box-shadow': '0 8px 30px rgba(102, 126, 234, 0.5)',
           },
         },
         {
           selector: 'edge',
           style: {
-            'width': 'data(weight)',
-            'line-color': '#9CA8B8',
+            'width': 'mapData(weight, 1, 5, 2, 6)',
+            'line-color': 'rgba(255, 255, 255, 0.5)',
             'curve-style': 'bezier',
-            'opacity': 0.5,
+            'opacity': 0.7,
           },
         },
         {
           selector: 'node.highlighted',
           style: {
-            'background-color': '#F39C12',
-            'text-outline-color': '#F39C12',
+            'background-color': '#764ba2',
+            'color': '#ffffff',
+            'text-outline-color': '#764ba2',
+            'border-color': '#fff',
+            'border-width': 4,
+            'box-shadow': '0 8px 30px rgba(118, 75, 162, 0.5)',
           },
         },
         {
           selector: 'edge.highlighted',
           style: {
-            'line-color': '#F39C12',
-            'opacity': 0.8,
-            'width': 3,
+            'line-color': 'rgba(255, 255, 255, 0.9)',
+            'opacity': 1,
+            'width': 5,
           },
         },
       ],
       layout: {
         name: 'cola',
         animate: true,
-        maxSimulationTime: 3000,
-        nodeSpacing: 40,
-        edgeLength: 100,
+        maxSimulationTime: 4000,
+        nodeSpacing: 80,
+        edgeLength: 180,
         fit: true,
-        padding: 50,
+        padding: 80,
+        convergenceThreshold: 0.01,
+        refresh: 20,
       },
     });
 
@@ -171,9 +184,11 @@ const MindMap = () => {
 
     // Cleanup
     return () => {
-      cy.destroy();
+      if (cy) {
+        cy.destroy();
+      }
     };
-  }, [terms]);
+  }, [terms, viewMode]);
 
   // Handle search
   const handleSearch = (e) => {
@@ -209,13 +224,24 @@ const MindMap = () => {
   };
 
   const resetView = () => {
-    if (cyRef.current) {
+    if (cyRef.current && viewMode === 'graph') {
       cyRef.current.fit(undefined, 50);
       cyRef.current.elements().removeClass('highlighted');
     }
     setSearchQuery('');
     setSelectedTerm(null);
   };
+
+  // Filter terms based on search
+  const filteredTerms = terms.filter(term => {
+    if (!searchQuery.trim()) return true;
+    const lowerQuery = searchQuery.toLowerCase();
+    return (
+      term.term.toLowerCase().includes(lowerQuery) ||
+      term.short_definition.toLowerCase().includes(lowerQuery) ||
+      term.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
+    );
+  });
 
   if (loading) {
     return (
@@ -236,67 +262,133 @@ const MindMap = () => {
   return (
     <div className="mindmap-container">
       <div className="mindmap-header">
-        <h1>SSR/SSG/CSR Glossary MindMap</h1>
-        <div className="controls">
-          <input
-            type="text"
-            placeholder="Search terms or tags..."
-            value={searchQuery}
-            onChange={handleSearch}
-            className="search-input"
-          />
-          <button onClick={resetView} className="reset-button">
-            Reset View
+        <div className="header-top">
+          <a href="https://itmo.ru/" target="_blank" rel="noopener noreferrer" className="logo">ИТМО</a>
+          <a href="https://github.com/CheikhEbeoumar" target="_blank" rel="noopener noreferrer" className="user-info">
+            <div className="user-avatar">CE</div>
+            <span className="user-name">Cheikh Ebeoumar</span>
+          </a>
+        </div>
+        
+        <div className="view-tabs">
+          <button 
+            className={`tab-button ${viewMode === 'glossary' ? 'active' : ''}`}
+            onClick={() => setViewMode('glossary')}
+          >
+            📖 Glossary
+          </button>
+          <button 
+            className={`tab-button ${viewMode === 'graph' ? 'active' : ''}`}
+            onClick={() => setViewMode('graph')}
+          >
+            🔗 Semantic graph
           </button>
         </div>
       </div>
       
       <div className="mindmap-content">
-        <div ref={containerRef} className="graph-container" />
-        
-        {selectedTerm && (
-          <div className="term-details">
-            <button 
-              className="close-button"
-              onClick={() => setSelectedTerm(null)}
-            >
-              ×
-            </button>
-            <h2>{selectedTerm.term}</h2>
-            <div className="term-section">
-              <h3>Short Definition</h3>
-              <p>{selectedTerm.short_definition}</p>
+        {viewMode === 'glossary' ? (
+          <div className="glossary-view">
+            <div className="glossary-grid">
+              {filteredTerms.map((term) => (
+                <div 
+                  key={term.id} 
+                  className="glossary-card"
+                  onClick={() => setSelectedTerm(term)}
+                >
+                  <h3 className="card-title">{term.term}</h3>
+                  <p className="card-description">{term.short_definition}</p>
+                </div>
+              ))}
             </div>
-            <div className="term-section">
-              <h3>Detailed Explanation</h3>
-              <p>{selectedTerm.long_definition}</p>
-            </div>
-            <div className="term-section">
-              <h3>Tags</h3>
-              <div className="tags">
-                {selectedTerm.tags.map(tag => (
-                  <span key={tag} className="tag">{tag}</span>
-                ))}
+            
+            {selectedTerm && (
+              <div className="term-details-modal" onClick={() => setSelectedTerm(null)}>
+                <div className="term-details-content" onClick={(e) => e.stopPropagation()}>
+                  <button 
+                    className="close-button"
+                    onClick={() => setSelectedTerm(null)}
+                  >
+                    ×
+                  </button>
+                  <h2>{selectedTerm.term}</h2>
+                  <div className="term-section">
+                    <h3>Short Definition</h3>
+                    <p>{selectedTerm.short_definition}</p>
+                  </div>
+                  <div className="term-section">
+                    <h3>Detailed Explanation</h3>
+                    <p>{selectedTerm.long_definition}</p>
+                  </div>
+                  <div className="term-section">
+                    <h3>Tags</h3>
+                    <div className="tags">
+                      {selectedTerm.tags.map(tag => (
+                        <span key={tag} className="tag">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="term-section">
+                    <h3>References</h3>
+                    <ul className="sources">
+                      {selectedTerm.sources.map((source, idx) => (
+                        <li key={idx}>
+                          <a href={source} target="_blank" rel="noopener noreferrer">
+                            {source}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="term-section">
-              <h3>References</h3>
-              <ul className="sources">
-                {selectedTerm.sources.map((source, idx) => (
-                  <li key={idx}>
-                    <a href={source} target="_blank" rel="noopener noreferrer">
-                      {source}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            )}
           </div>
+        ) : (
+          <>
+            <div ref={containerRef} className="graph-container" />
+            
+            {selectedTerm && (
+              <div className="term-details">
+                <button 
+                  className="close-button"
+                  onClick={() => setSelectedTerm(null)}
+                >
+                  ×
+                </button>
+                <h2>{selectedTerm.term}</h2>
+                <div className="term-section">
+                  <h3>Short Definition</h3>
+                  <p>{selectedTerm.short_definition}</p>
+                </div>
+                <div className="term-section">
+                  <h3>Detailed Explanation</h3>
+                  <p>{selectedTerm.long_definition}</p>
+                </div>
+                <div className="term-section">
+                  <h3>Tags</h3>
+                  <div className="tags">
+                    {selectedTerm.tags.map(tag => (
+                      <span key={tag} className="tag">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="term-section">
+                  <h3>References</h3>
+                  <ul className="sources">
+                    {selectedTerm.sources.map((source, idx) => (
+                      <li key={idx}>
+                        <a href={source} target="_blank" rel="noopener noreferrer">
+                          {source}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
+          </>
         )}
-      </div>
-      
-      <div className="mindmap-footer">
-        <p>Click on nodes to view details • Search to filter • Connected nodes share tags</p>
       </div>
     </div>
   );
